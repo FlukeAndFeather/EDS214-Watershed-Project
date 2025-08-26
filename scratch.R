@@ -44,7 +44,7 @@ rolling <- df_join_selected %>%
         )
   )
 
-rolling <- df_join_selected %>%
+roll_mean <- df_join_selected %>%
   group_by(sample_date, no3_n) %>% 
   mutate(across(.cols = starts_with("col"),
                 .fns = ~ rollmean(x = .x, k = 9, fill = NA, align = "left"))) %>% 
