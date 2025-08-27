@@ -11,6 +11,7 @@ Concentration calculation of Potassium, Nitrate, Magnesium, Calcium and Ammonium
 ```{r}
 library(tidyverse)
 library(janitor)
+library(zoo)
 ```
 
 ## Read and clean data
@@ -35,3 +36,23 @@ QB3 <- read_csv(here::here("data", "QuebradaCuenca3-Bisley.csv"),
 
 ## Join data sets
 
+```{r}
+df_join1 <- full_join(MPR, QB1)
+
+df_join2 <- full_join(QB2, QB3)
+
+df_join <- full_join(df_join1, df_join2)
+
+df_join_selected <- df_join %>%
+  select("sample_id", "sample_date", "no3_n", "k", "mg", "ca", "nh4_n")
+
+df_join_working <- df_join_selected %>%
+  mutate(year = year(sample_date))
+```
+
+```{r}
+roll_mean <- df_join_working %>%
+  group_by(sample_id) %>%
+  mutate(rollmean_no3 = rollmean(x = no3_n, k = 9, fill = NA, align = "left")) %>%
+  ungroup() # optional code
+```
