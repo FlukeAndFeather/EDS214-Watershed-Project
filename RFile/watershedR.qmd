@@ -56,3 +56,15 @@ roll_mean <- df_join_working %>%
   mutate(rollmean_no3 = rollmean(x = no3_n, k = 9, fill = NA, align = "left")) %>%
   ungroup() # optional code
 ```
+
+```{r}
+#moving_average <- function(focal_date, dates, conc, win_size_wks) {
+  # Which dates are in the window?
+  #is_in_window <- (dates > focal_date - (win_size_wks / 2) * 7) &
+    #(dates < focal_date + (win_size_wks / 2) * 7)
+  # Find the associated concentrations
+  #window_conc <- conc[is_in_window]
+  # Calculate the mean
+  #result <- mean(window_conc)
+
+```
