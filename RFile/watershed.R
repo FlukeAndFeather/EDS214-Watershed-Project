@@ -1,4 +1,4 @@
-## Spaghetti code
+# Concentration calculation of Potassium, Nitrate, Magnesium, Calcium and Ammonium in four watersheds of Puerto Rico.
 
 ## Load & run libraries
 library(tidyverse)
@@ -28,24 +28,29 @@ df_join <- full_join(df_join1, df_join2)
 df_join_selected <- df_join %>%
   select("sample_id", "sample_date", "no3_n", "k", "mg", "ca", "nh4_n")
 
-library(lubridate)
-library(dplyr)
-library(slider)
+df_join_working <- df_join_selected %>%
+  mutate(year = year(sample_date))
 
 library(zoo)
 
-rolling <- df_join_selected %>%
-  group_by(no3_n) %>%
-  mutate(mean_9w_no3n = slide_index_dbl(
-        .x = no3_n,
-        .i = sample_date,
-        .f = mean,
-        .before = weeks (9)
-        )
-  )
+#rolling <- df_join_selected %>%
+#group_by(sample_date, no3_n) %>%
+#mutate(mean_9w_no3n = slide_index_dbl(
+#.x = no3_n,
+#.i = sample_date,
+#.f = mean(na.rm = TRUE),
+#.before = weeks (9)
+#)
+#)
 
-roll_mean <- df_join_selected %>%
-  group_by(sample_date, no3_n) %>% 
-  mutate(across(.cols = starts_with("col"),
-                .fns = ~ rollmean(x = .x, k = 9, fill = NA, align = "left"))) %>% 
-  ungroup()
+
+#this is alternative
+roll_mean <- df_join_working %>%
+  group_by(sample_id) %>%
+  mutate(rollmean_no3 = rollmean(x = no3_n, k = 9, fill = NA, align = "left")) %>%
+  ungroup() # optional code
+
+#arrange(sample_date) %>% 
+
+
+

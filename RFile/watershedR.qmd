@@ -1,0 +1,37 @@
+---
+title: "watershedR"
+format: html
+editor: visual
+---
+
+Concentration calculation of Potassium, Nitrate, Magnesium, Calcium and Ammonium in four watersheds of Puerto Rico.
+
+## Load packages
+
+```{r}
+library(tidyverse)
+library(janitor)
+```
+
+## Read and clean data
+
+```{r}
+MPR <- read_csv(here::here("data", "RioMameyesPuenteRoto.csv"),
+                na = c(" ", "NA")) %>%
+clean_names() #clean data
+
+QB1 <- read_csv(here::here("data", "QuebradaCuenca1-Bisley.csv"),
+                na = c(" ", "NA")) %>%
+  clean_names() #clean data
+
+QB2 <- read_csv(here::here("data", "QuebradaCuenca2-Bisley.csv"),
+                na = c(" ", "NA")) %>%
+  clean_names() #clean data
+
+QB3 <- read_csv(here::here("data", "QuebradaCuenca3-Bisley.csv"),
+                na = c(" ", "NA")) %>%
+  clean_names() #clean data
+```
+
+## Join data sets
+
