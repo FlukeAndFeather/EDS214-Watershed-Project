@@ -1,5 +1,5 @@
 ---
-title: "watershedR"
+title: "draft"
 format: html
 editor: visual
 ---
@@ -37,13 +37,11 @@ QB3 <- read_csv(here::here("data", "QuebradaCuenca3-Bisley.csv"),
   clean_names() #clean data
 ```
 
-
 ```{r}
 # Joining four data sets into one dataframe
 
 watersheds_joined <- rbind(PRM, QB1, QB2, QB3)
 ```
-
 
 ```{r}
 # Create a new dataframe
@@ -64,7 +62,6 @@ watersheds <- watersheds_joined %>%
 
 source(here::here("R", "revised-func-watershed.R"))
 ```
-
 
 ```{r}
 # Calculating rolling mean for nitrate parameters
