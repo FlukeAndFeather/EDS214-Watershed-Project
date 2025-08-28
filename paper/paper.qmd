@@ -12,7 +12,7 @@ Concentration calculation of Potassium, Nitrate, Magnesium, Calcium and Ammonium
 # Load packages
 library(tidyverse)
 library(janitor)
-#library(zoo)
+
 ```
 
 ## Data
@@ -38,33 +38,39 @@ QB3 <- read_csv(here::here("data", "QuebradaCuenca3-Bisley.csv"),
 ```
 
 ```{r}
-# Joining four data sets into one dataframe
+# Combine four data sets into one data frame
 
-watersheds_joined <- rbind(PRM, QB1, QB2, QB3)
+watersheds_combined <- rbind(PRM, QB1, QB2, QB3)
+
+# Intermediate output, detail list of all datasets
+saveRDS(watersheds_combined, "watersheds_combined.rds")
 ```
 
 ```{r}
-# Create a new dataframe
+# Create a new data frame
 
-watersheds <- watersheds_joined %>%
+watersheds <- watersheds_combined %>%
   #only selecting the column that requires computation
   select(sample_id, sample_date, no3_n, k, mg, ca, nh4_n) %>%
-  #add a new column  and change the sample dates into year for plotting
+  #add a new column  and change the sample dates into year for plotting, this is optional
   mutate(year = year(sample_date)) %>%
-  #reclocating the newly added column next to the sample dates
+  #relocating the newly added column next to the sample dates
   relocate(year, .after = sample_date)
+
+# Intermediate output, selected columns for computing moving average
+saveRDS(watersheds, "watersheds.rds")
 ```
 
 ## Methods
 
 ```{r}
-# Sourcing the function from different .R script
+# Sourcing the moving average function from different .R script
 
 source(here::here("R", "revised-func-watershed.R"))
 ```
 
 ```{r}
-# Calculating rolling mean for nitrate parameters
+# Calculating moving average for nitrate
 
 watersheds$no3_n_ma <- sapply(
   watersheds$sample_date,
@@ -76,7 +82,7 @@ watersheds$no3_n_ma <- sapply(
 ```
 
 ```{r}
-# Calculating rolling mean for potassium parameters
+# Calculating moving average for potassium
 
 watersheds$k_ma <- sapply(
   watersheds$sample_date,
@@ -88,7 +94,7 @@ watersheds$k_ma <- sapply(
 ```
 
 ```{r}
-# Calculating rolling mean for magnesium parameters
+# Calculating moving average for magnesium
 
 watersheds$mg_ma <- sapply(
   watersheds$sample_date,
@@ -100,7 +106,7 @@ watersheds$mg_ma <- sapply(
 ```
 
 ```{r}
-# Calculating rolling mean for calcium parameters
+# Calculating moving average for calcium
 
 watersheds$ca_ma <- sapply(
   watersheds$sample_date,
@@ -112,7 +118,7 @@ watersheds$ca_ma <- sapply(
 ```
 
 ```{r}
-# Calculating rolling mean for ammonium parameters
+# Calculating moving average for ammonium
 
 watersheds$nh4_n_ma <- sapply(
   watersheds$sample_date,
@@ -142,21 +148,28 @@ watersheds$nh4_n_ma <- sapply(
 ```
 
 ```{r}
-watersheds_cleaned <- watersheds %>%
+# Create a data frame for the ggplot!
+
+watersheds_ma <- watersheds %>%
+  # select columns of interest for reshaping
   select(sample_id, sample_date, year, no3_n_ma, k_ma, mg_ma, ca_ma, nh4_n_ma) %>%
+  # reshape table from wide to long
   pivot_longer(cols = c("no3_n_ma", "k_ma", "mg_ma", "ca_ma", "nh4_n_ma"),
-               names_to = "ion",
-               values_to = "rolling_avg_value") %>%
-  drop_na() %>%
-  filter(year >= 1988, year <= 1994)
+               names_to = "ion", # give column name for variable
+               values_to = "moving_avg_value") %>% # give column name for values
+  filter(year >= 1988, year <= 1994) # choose the year of interest for computing
+
+# Intermediate output, data frame for ggplot
+saveRDS(watersheds_ma, "watersheds_ma.rds")
 ```
 
 ## Results
 
 ```{r}
-# Create a plot!
+# Create a ggplot!
 
-ggplot(data = watersheds_cleaned, aes(x = sample_date, y = rolling_avg_value)) +
-  geom_line() +
-  facet_wrap(~ion, scales = "free_y", ncol = 1)
+ggplot(data = watersheds_ma, aes(x = sample_date, y = moving_avg_value)) +
+  geom_line(aes()) +
+  facet_wrap(~ion, scales = "free_y", ncol = 1) +
+  geom_vline(xintercept = 1:5, colour="gray", linetype = "longdash")
 ```
