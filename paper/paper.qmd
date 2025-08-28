@@ -161,5 +161,5 @@ watersheds_cleaned <- watersheds %>%
 
 ggplot(data = watersheds_cleaned, aes(x = sample_date, y = rolling_avg_value)) +
   geom_line() +
-  facet_wrap(~ion, scales = "free_y", ncol = 1) 
+  facet_wrap(~ion, scales = "free_y", ncol = 1)
 ```
