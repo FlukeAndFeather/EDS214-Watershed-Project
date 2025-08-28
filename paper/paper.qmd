@@ -6,17 +6,20 @@ editor: visual
 
 Concentration calculation of Potassium, Nitrate, Magnesium, Calcium and Ammonium in four watersheds of Puerto Rico.
 
-## Load packages
+## Background
 
 ```{r}
+# Load packages
 library(tidyverse)
 library(janitor)
-library(zoo)
+#library(zoo)
 ```
 
-## Read and clean data
+## Data
 
 ```{r}
+# Read and clean data
+
 PRM <- read_csv(here::here("data", "RioMameyesPuenteRoto.csv"),
                 na = c(" ", "NA")) %>%
 clean_names() #clean data
@@ -34,15 +37,17 @@ QB3 <- read_csv(here::here("data", "QuebradaCuenca3-Bisley.csv"),
   clean_names() #clean data
 ```
 
-## Joining four data sets into one dataframe
 
 ```{r}
+# Joining four data sets into one dataframe
+
 watersheds_joined <- rbind(PRM, QB1, QB2, QB3)
 ```
 
-## Create a new dataframe
 
 ```{r}
+# Create a new dataframe
+
 watersheds <- watersheds_joined %>%
   #only selecting the column that requires computation
   select(sample_id, sample_date, no3_n, k, mg, ca, nh4_n) %>%
@@ -50,18 +55,20 @@ watersheds <- watersheds_joined %>%
   mutate(year = year(sample_date)) %>%
   #reclocating the newly added column next to the sample dates
   relocate(year, .after = sample_date)
-
 ```
 
-## Sourcing the function from different .R script
+## Methods
 
 ```{r}
+# Sourcing the function from different .R script
+
 source(here::here("R", "revised-func-watershed.R"))
 ```
 
-## Calculating rolling mean for each parameters
 
 ```{r}
+# Calculating rolling mean for nitrate parameters
+
 watersheds$no3_n_ma <- sapply(
   watersheds$sample_date,
   moving_average,
@@ -72,6 +79,8 @@ watersheds$no3_n_ma <- sapply(
 ```
 
 ```{r}
+# Calculating rolling mean for potassium parameters
+
 watersheds$k_ma <- sapply(
   watersheds$sample_date,
   moving_average,
@@ -82,6 +91,8 @@ watersheds$k_ma <- sapply(
 ```
 
 ```{r}
+# Calculating rolling mean for magnesium parameters
+
 watersheds$mg_ma <- sapply(
   watersheds$sample_date,
   moving_average,
@@ -92,6 +103,8 @@ watersheds$mg_ma <- sapply(
 ```
 
 ```{r}
+# Calculating rolling mean for calcium parameters
+
 watersheds$ca_ma <- sapply(
   watersheds$sample_date,
   moving_average,
@@ -102,6 +115,8 @@ watersheds$ca_ma <- sapply(
 ```
 
 ```{r}
+# Calculating rolling mean for ammonium parameters
+
 watersheds$nh4_n_ma <- sapply(
   watersheds$sample_date,
   moving_average,
@@ -134,15 +149,17 @@ watersheds_cleaned <- watersheds %>%
   select(sample_id, sample_date, year, no3_n_ma, k_ma, mg_ma, ca_ma, nh4_n_ma) %>%
   pivot_longer(cols = c("no3_n_ma", "k_ma", "mg_ma", "ca_ma", "nh4_n_ma"),
                names_to = "ion",
-               values_to = "amount") %>%
+               values_to = "rolling_avg_value") %>%
   drop_na() %>%
   filter(year >= 1988, year <= 1994)
 ```
 
-#filter(!if_all(everything(), is.na)) remove rows where all columns are empty #drop_na() drops any row with at least one NA.
+## Results
 
 ```{r}
-ggplot(data = watersheds_cleaned, aes(x = sample_date, y = amount)) +
+# Create a plot!
+
+ggplot(data = watersheds_cleaned, aes(x = sample_date, y = rolling_avg_value)) +
   geom_line() +
   facet_wrap(~ion, scales = "free_y", ncol = 1) 
 ```
