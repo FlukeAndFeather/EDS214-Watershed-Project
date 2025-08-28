@@ -23,7 +23,7 @@ There is a different r script file with a moving average function, that was sour
 # Document
 
 ### [Not yet] The repo has a README that explains where to find (1) data, (2) analysis script, (3) supporting code, and (4) outputs.
-I have drafted the content of REAME but it needs to be revised.
+I have drafted the content of README but it needs to be revised.
 
 ### [Not yet] The README includes a flowchart and text explaining how the analysis works.
 I haven't completed this part. I am working on it.
