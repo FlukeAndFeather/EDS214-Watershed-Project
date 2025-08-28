@@ -171,5 +171,6 @@ saveRDS(watersheds_ma, "watersheds_ma.rds")
 ggplot(data = watersheds_ma, aes(x = sample_date, y = moving_avg_value)) +
   geom_line(aes()) +
   facet_wrap(~ion, scales = "free_y", ncol = 1) +
-  geom_vline(xintercept = 1:5, colour="gray", linetype = "longdash")
+  geom_vline(xintercept = 1:5, colour="gray", linetype = "longdash") +
+  theme_classic()
 ```
