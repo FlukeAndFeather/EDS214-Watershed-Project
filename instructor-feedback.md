@@ -29,7 +29,7 @@ c786c716b3f7431766edd32b1d304363a3e3d0f9
 
 #[NY] The analysis runs without errors
 
-[NY] **The analysis produces the expected output**
+#[NY] **The analysis produces the expected output**
 
 #[NY] **Data import/cleaning is handled in its own script(s)**
 - Data visualization/plotting included in the data import/cleaning script `processed_data.R`
@@ -59,7 +59,7 @@ After cloning the repo on Workbench:
 
 #[NY] Running the environment initialization script installs all required packages
 
-[NY] The analysis script runs without errors
+#[NY] The analysis script runs without errors
 
 ## Collaborate
 
