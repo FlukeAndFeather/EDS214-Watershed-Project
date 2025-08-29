@@ -1,5 +1,9 @@
-### Chemistry of stream water from the Luquillo Mountains
-
+---
+title: "Chemistry of watersheds from the Luquillo Mountains, Puerto Rico"
+format: html
+editor: visual
+warning: FALSE
+---
 
 ## Background
   
