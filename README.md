@@ -6,7 +6,7 @@ All analysis were done on R Version 2025.05.1 using the following libraries tidy
 
 # Workflow
 
-![workflow](Workflow.png)
+![Workflow diagram](Workflow.png)
 
 # Contents
 
