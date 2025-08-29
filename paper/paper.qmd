@@ -9,9 +9,11 @@ warning: FALSE
 #| echo: FALSE
 library(tidyverse)
 library(janitor)
+
+#source()
 ```
 
-## Background
+## Purpose
 
 This repository presents visual representation of a) potassium, (b) nitrate-N, (c) magnesium, (d) calcium and (e) ammonium-N ions before and after hurricane Hugo in Puerto Rico. Four watersheds namely Quebrada uno-Bisley (Q1), Quebrada dos-Bisley (Q2), Quebrada tres-Bisley (Q3) and Puente Roto Mameyes (PRM) at the Luquillo Mountain of Puerto Rico were taken as a sample sites to calculate time-series plots of 9 weeks moving average from year 1988 to 1994.
 
@@ -23,23 +25,38 @@ This repository presents visual representation of a) potassium, (b) nitrate-N, (
 
 The data was extracted from McDowell and International Institute Of Tropical Forestry (IITF). [link](https://portal.edirepository.org/nis/mapbrowse?packageid=knb-lter-luq.20.4923064)
 
-## Data
-
-This section consists of clean data sets that were used to extract the expected outputs.
-
-```{r}
-#| message: false
-readRDS("../outputs/watersheds_combined.rds")
-readRDS("../outputs/watersheds.rds")
-#readRDS("../outputs/watersheds_ma.rds")
-```
 
 ## Data visualization
 
-![Workflow diagram](Workflow.png)
-
 ```{r}
-knitr::include_graphics(here::here("figs/avg_conc.jpg"))
+#| echo: false
+#| message: false
+
+
+# Read data
+watersheds_ma <- read_rds(here::here("outputs", "watersheds_ma.rds"))
+
+## Results
+
+# Create a ggplot!
+
+ggplot(data = watersheds_ma, aes(x = sample_date, y = moving_avg_value, linetype = sites)) +
+  geom_line(na.rm = TRUE) +
+  facet_wrap(~ion,
+             scales = "free_y",
+             ncol = 1) +
+  geom_vline(xintercept = as.Date("1989-09-18"),
+             colour="black",
+             linetype = "dotdash") +
+  labs(title = "Average concentration of ions before and after hurricane Hugo",
+       x = "Year",
+       y = "Nine weeks moving average of the ion") +
+  theme_minimal() +
+  scale_linetype_manual(values = c("solid", "dotted", "dashed", "dotdash"))
+
+# Save ggplot
+
+ggsave(here::here("figs", "avg_conc.jpg"))
 ```
 
 # References
