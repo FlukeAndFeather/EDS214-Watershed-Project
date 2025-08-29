@@ -131,8 +131,8 @@ saveRDS(watersheds_ma, "watersheds_ma.rds")
 ```{r}
 # Create a ggplot!
 
-ggplot(data = watersheds_ma, aes(x = sample_date, y = moving_avg_value)) +
-  geom_line(aes(color = sites)) +
+ggplot(data = watersheds_ma, aes(x = sample_date, y = moving_avg_value, linetype = sites)) +
+  geom_line(na.rm = TRUE) +
   facet_wrap(~ion,
              scales = "free_y",
              ncol = 1) +
@@ -142,5 +142,6 @@ ggplot(data = watersheds_ma, aes(x = sample_date, y = moving_avg_value)) +
   labs(title = "Average concentration of ions before and after hurricane Hugo",
        x = "Year",
        y = "Nine weeks moving average of the ion") +
-  theme_minimal()
+  theme_minimal() +
+  scale_linetype_manual(values = c("solid", "dotted", "dashed", "dotdash"))
 ```
