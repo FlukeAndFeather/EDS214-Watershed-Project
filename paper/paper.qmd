@@ -10,8 +10,9 @@ Concentration calculation of Potassium, Nitrate, Magnesium, Calcium and Ammonium
 
 ```{r}
 # Install packages
-install.packages("tidyverse")
-install.packages("janitor")
+# Install only if you have not installed already
+# install.packages("tidyverse")
+# install.packages("janitor")
 ```
 
 ```{r}
@@ -19,6 +20,9 @@ install.packages("janitor")
 library(tidyverse)
 library(janitor)
 
+# Sourcing the moving average function from different .R script
+
+source(here::here("R", "revised-func-watershed.R"))
 ```
 
 ## Data
@@ -56,12 +60,14 @@ saveRDS(watersheds_combined, "watersheds_combined.rds")
 # Create a new data frame
 
 watersheds <- watersheds_combined %>%
+  rename(sites = sample_id) %>%
   #only selecting the column that requires computation
-  select(sample_id, sample_date, no3_n, k, mg, ca, nh4_n) %>%
+  select(sites, sample_date, no3_n, k, mg, ca, nh4_n) %>%
   #add a new column  and change the sample dates into year for plotting, this is optional
   mutate(year = year(sample_date)) %>%
   #relocating the newly added column next to the sample dates
   relocate(year, .after = sample_date)
+  
 
 # Intermediate output, selected columns for computing moving average
 saveRDS(watersheds, "watersheds.rds")
@@ -70,69 +76,20 @@ saveRDS(watersheds, "watersheds.rds")
 ## Methods
 
 ```{r}
-# Sourcing the moving average function from different .R script
+# Calculating moving average for nitrate, potassium, magnesium, calcium, ammonia
 
-source(here::here("R", "revised-func-watershed.R"))
-```
-
-```{r}
-# Calculating moving average for nitrate
-
-watersheds$no3_n_ma <- sapply(
-  watersheds$sample_date,
-  moving_average,
-  dates = watersheds$sample_date,
-  conc = watersheds$no3_n,
-  win_size_wks = 9
-  )
-```
-
-```{r}
-# Calculating moving average for potassium
-
-watersheds$k_ma <- sapply(
-  watersheds$sample_date,
-  moving_average,
-  dates = watersheds$sample_date,
-  conc = watersheds$k,
-  win_size_wks = 9
-  )
-```
-
-```{r}
-# Calculating moving average for magnesium
-
-watersheds$mg_ma <- sapply(
-  watersheds$sample_date,
-  moving_average,
-  dates = watersheds$sample_date,
-  conc = watersheds$mg,
-  win_size_wks = 9
-  )
-```
-
-```{r}
-# Calculating moving average for calcium
-
-watersheds$ca_ma <- sapply(
-  watersheds$sample_date,
-  moving_average,
-  dates = watersheds$sample_date,
-  conc = watersheds$ca,
-  win_size_wks = 9
-)
-```
-
-```{r}
-# Calculating moving average for ammonium
-
-watersheds$nh4_n_ma <- sapply(
-  watersheds$sample_date,
-  moving_average,
-  dates = watersheds$sample_date,
-  conc = watersheds$nh4_n,
-  win_size_wks = 9
-)
+watersheds_grouping <- watersheds %>%
+  group_by(sites) %>%
+  mutate(nitrate_N = sapply(sample_date, moving_average,
+                            dates = sample_date, conc = no3_n, win_size_wks = 9)) %>%
+  mutate(potassium = sapply(sample_date, moving_average,
+                            dates = sample_date, conc = k, win_size_wks = 9)) %>%
+  mutate(magnesium = sapply(sample_date, moving_average,
+                            dates = sample_date, conc = mg, win_size_wks = 9)) %>%
+  mutate(calcium = sapply(sample_date, moving_average,
+                          dates = sample_date, conc = ca, win_size_wks = 9)) %>%
+  mutate(ammonium_N = sapply(sample_date, moving_average,
+                             dates = sample_date, conc = nh4_n, win_size_wks = 9))
 ```
 
 ```{r}
@@ -156,11 +113,11 @@ watersheds$nh4_n_ma <- sapply(
 ```{r}
 # Create a data frame for the ggplot!
 
-watersheds_ma <- watersheds %>%
+watersheds_ma <- watersheds_grouping %>%
   # select columns of interest for reshaping
-  select(sample_id, sample_date, year, no3_n_ma, k_ma, mg_ma, ca_ma, nh4_n_ma) %>%
+  select(sites, sample_date, year, nitrate_N, potassium, magnesium, calcium, ammonium_N) %>%
   # reshape table from wide to long
-  pivot_longer(cols = c("no3_n_ma", "k_ma", "mg_ma", "ca_ma", "nh4_n_ma"),
+  pivot_longer(cols = c("nitrate_N", "potassium", "magnesium", "calcium", "ammonium_N"),
                names_to = "ion", # give column name for variable
                values_to = "moving_avg_value") %>% # give column name for values
   filter(year >= 1988, year <= 1994) # choose the year of interest for computing
@@ -175,14 +132,15 @@ saveRDS(watersheds_ma, "watersheds_ma.rds")
 # Create a ggplot!
 
 ggplot(data = watersheds_ma, aes(x = sample_date, y = moving_avg_value)) +
-  geom_line(aes()) +
+  geom_line(aes(color = sites)) +
   facet_wrap(~ion,
              scales = "free_y",
              ncol = 1) +
   geom_vline(xintercept = as.Date("1989-09-18"),
              colour="black",
-             linetype = "longdash") +
-  facet_wrap(~ion, scales = "free_y", ncol = 1) +
-  geom_vline(xintercept = 1:5, colour="gray", linetype = "longdash") +
+             linetype = "dotdash") +
+  labs(title = "Average concentration of ions before and after hurricane Hugo",
+       x = "Year",
+       y = "Nine weeks moving average of the ion") +
   theme_minimal()
 ```
