@@ -10,7 +10,11 @@ All analysis were done on R version 4.5.1 using the following libraries tidyvers
 
 ## Contents
 
-This repository contains the following documents 1. data = The folder includes all the raw data of the watersheds and helps you with the computation. The data can be accessed through <https://doi.org/10.6073/PASTA/F31349BEBDC304F758718F4798D25458>. 2. R = This folder contains the file with the codes that will run the full statistical and visual representation. 3. Output = This folder contains intermediate outputs in .rds file that will produce the expected output. 4. figs = This folder contains the visual representation that is derived from the raw data, and will run through the scripts in the folder R.
+This repository contains the following documents
+1. data = The folder includes all the raw data of the watersheds and helps you with the computation. The data can be accessed through <https://doi.org/10.6073/PASTA/F31349BEBDC304F758718F4798D25458>.
+2. R = This folder contains the file with the codes that will run the full statistical and visual representation.
+3. Output = This folder contains intermediate outputs in .rds file that will produce the expected output.
+4. figs = This folder contains the visual representation that is derived from the raw data, and will run through the scripts in the folder R.
 
 ## References
 
