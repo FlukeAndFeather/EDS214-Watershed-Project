@@ -1,38 +1,28 @@
----
-title: "final"
-format: html
-editor: visual
----
-
 ### Chemistry of stream water from the Luquillo Mountains
 
-## Background
 
-```{r}
+## Background
+  
 # Install packages
 # Install only if you have not installed already
 # install.packages("tidyverse")
 # install.packages("janitor")
-```
 
-```{r}
 # Load packages
 library(tidyverse)
 library(janitor)
 
 # Sourcing the moving average function from different .R script
 source(here::here("R", "revised-func-watershed.R"))
-```
 
 ## Data
 
-```{r}
 # Read and clean data
 
 # PRM = Puente Roto Mameyes (PRM)
 PRM <- read_csv(here::here("data", "RioMameyesPuenteRoto.csv"),
                 na = c(" ", "NA")) %>%
-clean_names() #clean data
+  clean_names() #clean data
 
 # Quebrada uno-Bisley (QB1)
 QB1 <- read_csv(here::here("data", "QuebradaCuenca1-Bisley.csv"),
@@ -48,17 +38,15 @@ QB2 <- read_csv(here::here("data", "QuebradaCuenca2-Bisley.csv"),
 QB3 <- read_csv(here::here("data", "QuebradaCuenca3-Bisley.csv"),
                 na = c(" ", "NA")) %>%
   clean_names() #clean data
-```
 
-```{r}
+
 # Combine four data sets into one data frame
 watersheds_combined <- rbind(PRM, QB1, QB2, QB3)
 
 # Intermediate output, detail list of all datasets
-saveRDS(watersheds_combined, "watersheds_combined.rds")
-```
+saveRDS(watersheds_combined, "outputs/watersheds_combined.rds")
 
-```{r}
+
 # Create a new data frame
 
 watersheds <- watersheds_combined %>%
@@ -69,15 +57,14 @@ watersheds <- watersheds_combined %>%
   mutate(year = year(sample_date)) %>%
   #relocating the newly added column next to the sample dates
   relocate(year, .after = sample_date)
-  
+
 
 # Intermediate output, selected columns for computing moving average
-saveRDS(watersheds, "watersheds.rds")
-```
+saveRDS(watersheds, "outputs/watersheds.rds")
+
 
 ## Methods
 
-```{r}
 # Calculating moving average for nitrate_N, potassium, magnesium, calcium, ammonium_N
 
 watersheds_grouping <- watersheds %>%
@@ -92,9 +79,8 @@ watersheds_grouping <- watersheds %>%
                           dates = sample_date, conc = ca, win_size_wks = 9)) %>% #add new column and calculate moving average for calcium
   mutate(ammonium_N = sapply(sample_date, moving_average,
                              dates = sample_date, conc = nh4_n, win_size_wks = 9)) #add new column and calculate moving average for ammonium_N
-```
 
-```{r}
+
 # Create a data frame for the ggplot!
 
 watersheds_ma <- watersheds_grouping %>%
@@ -107,12 +93,11 @@ watersheds_ma <- watersheds_grouping %>%
   filter(year >= 1988, year <= 1994) # choose the year of interest for computing
 
 # Intermediate output, data frame for ggplot
-saveRDS(watersheds_ma, "watersheds_ma.rds")
-```
+saveRDS(watersheds_ma, "outputs/watersheds_ma.rds")
+
 
 ## Results
 
-```{r}
 # Create a ggplot!
 
 ggplot(data = watersheds_ma, aes(x = sample_date, y = moving_avg_value, linetype = sites)) +
@@ -128,10 +113,7 @@ ggplot(data = watersheds_ma, aes(x = sample_date, y = moving_avg_value, linetype
        y = "Nine weeks moving average of the ion") +
   theme_minimal() +
   scale_linetype_manual(values = c("solid", "dotted", "dashed", "dotdash"))
-```
 
-```{r}
 # Save ggplot
 
 ggsave(here::here("figs", "avg_conc.jpg"))
-```
