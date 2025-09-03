@@ -23,22 +23,22 @@ c786c716b3f7431766edd32b1d304363a3e3d0f9
 # Instructor feedback
 
 ## Automate
-
-#[NY] **Running the entire analysis requires rendering one Quarto document**
+[E] **Running the entire analysis requires rendering one Quarto document**
 - ! object 'watersheds_combined' not found
+- The Quarto document looks great now!
 
-#[NY] The analysis runs without errors
+[M] The analysis runs without errors
 
-#[NY] **The analysis produces the expected output**
+[M] **The analysis produces the expected output**
 
-#[NY] **Data import/cleaning is handled in its own script(s)**
+[M] **Data import/cleaning is handled in its own script(s)**
 - Data visualization/plotting included in the data import/cleaning script `processed_data.R`
 
 ## Organize
 
 [M] Raw data is contained in its own folder
 
-#[NY] Intermediate outputs are created and saved to a separate folder from raw data
+[M] Intermediate outputs are created and saved to a separate folder from raw data
 - `.rds` files are saved in multiple locations: root and under `outputs`
 
 [M] **At least one piece of functionality has been refactored into a function in its own file**
@@ -47,7 +47,7 @@ c786c716b3f7431766edd32b1d304363a3e3d0f9
 
 [M] The repo has a README that explains where to find (1) data, (2) analysis script, (3) supporting code, and (4) outputs
 
-#[NY] **The README includes a flowchart and text explaining how the analysis works**
+[M] **The README includes a flowchart and text explaining how the analysis works**
 
 [M] **The code is appropriately commented**
 
@@ -57,9 +57,9 @@ c786c716b3f7431766edd32b1d304363a3e3d0f9
 
 After cloning the repo on Workbench:
 
-#[NY] Running the environment initialization script installs all required packages
+[M] Running the environment initialization script installs all required packages
 
-#[NY] The analysis script runs without errors
+[M] The analysis script runs without errors
 
 ## Collaborate
 
